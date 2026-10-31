@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Workspace">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Fredoka:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&family=Prompt:wght@400;500&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#fdf8f5;--card:#fff;--tx:#4a4458;--mu:#8b8499;--ln:#eee6ee;--ac:#b7a4ee;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -90,17 +90,23 @@ button.add,button.bt{min-height:44px;width:100%}
 }
 
 /* ===== Pastel v2 ===== */
-body{font-family:'Prompt','Noto Sans Thai',system-ui,sans-serif}
+.dd{width:1.15em;height:1.15em;fill:none;stroke:var(--tx);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:url(#wob);flex-shrink:0}
+.dd .f{fill:var(--card);fill-opacity:.85}
+h2 .dd{width:1.1em;height:1.1em;vertical-align:-.2em;margin-right:4px}
+.card h3 .dd{width:1.25em;height:1.25em;vertical-align:-.28em;margin-right:4px}
+nav h1 .dd{width:34px;height:34px;padding:5px;border-radius:12px;background:#ffc9d6;font-size:20px;box-sizing:border-box;stroke:#4a4458}
+body{font-family:'Mali','Prompt','Noto Sans Thai',system-ui,sans-serif;line-height:1.5}
+input,textarea,select,button{font-family:inherit}
 body::before,body::after{content:"";position:fixed;border-radius:50%;z-index:0;pointer-events:none}
 body::before{width:320px;height:320px;top:-110px;right:-70px;background:color-mix(in srgb,#ffc9d6 45%,var(--bg))}
 body::after{width:240px;height:240px;bottom:-80px;left:200px;background:color-mix(in srgb,#bfe8d0 40%,var(--bg))}
 :root[data-holiday] body::before,:root[data-holiday] body::after{opacity:.4}
 nav{background:var(--card);margin:16px 0 16px 16px;top:16px;height:calc(100vh - 32px);border-radius:28px;box-shadow:0 6px 24px color-mix(in srgb,var(--ac) 22%,transparent)}
-nav h1{font:600 17px 'Fredoka','Prompt',sans-serif;margin:2px 8px 14px}
+nav h1{font:600 17px 'Mali','Prompt',sans-serif;margin:2px 8px 14px}
 nav a{padding:7px 10px;border-radius:16px}
 nav a .ni{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:16px;line-height:1;background:color-mix(in srgb,var(--c,var(--ac)) var(--mix,80%),var(--card))}
 nav a.on{background:color-mix(in srgb,var(--ac) 22%,var(--card))}
-h2{font-family:'Fredoka','Prompt',sans-serif;font-weight:600}
+h2{font-family:'Mali','Prompt',sans-serif;font-weight:600}
 .hero{display:flex;justify-content:space-between;align-items:center;gap:16px;border-radius:30px;padding:20px 28px;margin-bottom:18px;background:color-mix(in srgb,var(--ac) 38%,var(--card))}
 .hero h2{font-size:28px}
 .hero .sub{margin:4px 0 14px;color:var(--tx)}
@@ -110,7 +116,7 @@ h2{font-family:'Fredoka','Prompt',sans-serif;font-weight:600}
 button.stat{display:flex;flex-direction:column;gap:8px;border-radius:24px;transition:transform .15s}
 button.stat:hover{transform:translateY(-2px)}
 .stat .ic{font-style:normal;width:32px;height:32px;border-radius:11px;background:var(--card);display:grid;place-items:center;font-size:17px}
-.stat b{font-family:'Fredoka','Prompt',sans-serif;font-weight:600}
+.stat b{font-family:'Mali','Prompt',sans-serif;font-weight:600}
 .card{border:0;border-radius:26px;padding:18px;box-shadow:0 6px 20px color-mix(in srgb,var(--ac) 14%,transparent)}
 .it{border-bottom:1px dashed var(--ln)}
 input,textarea,select{border:2px solid var(--ln);border-radius:16px}
@@ -124,6 +130,7 @@ nav a .ni{width:28px;height:28px;font-size:15px}
 .hero{padding:16px 18px}.hero svg{display:none}
 body::before,body::after{display:none}}
 </style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="wob"><feTurbulence type="fractalNoise" baseFrequency=".05" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter></svg>
 <nav id="nav"></nav><main id="main"></main><div id="lock" hidden></div>
 <script>
 const M={
@@ -137,6 +144,22 @@ calendar:{n:'ปฏิทิน',i:'📅',c:'#bfeaea',f:[['title','กิจก�
 ideas:{n:'ไอเดีย',i:'💡',c:'#ffd0b8',f:[['title','ไอเดีย','t'],['st','สถานะ','s',['ใหม่','กำลังคิด','ลงมือแล้ว','ทิ้ง']],['body','รายละเอียด','a']]},
 finance:{n:'การเงิน',i:'💰',c:'#cdeab8',f:[['title','รายการ','t'],['amt','จำนวน (฿)','n'],['type','ประเภท','s',['รายจ่าย','รายรับ']],['date','วันที่','d']]}
 };
+const S=(f,d)=>'<svg class="dd" viewBox="0 0 28 28" aria-hidden="true"><path class="f" d="'+f+'"/><path d="'+d+'"/></svg>';
+const ICO={
+dash:S('M4.5 14.5L14 5.5l9.500 9V23.500c-3 .8-16 .8-19 0z','M3.500 15L14 5l10.500 10M12 23v-6h4v6'),
+todo:S('M14 4c6 0 10 4.200 10 9.800S20 24 14 24 4 19.600 4 14 8 4 14 4z','M9.500 14.500l3.200 3.500 6-7.500'),
+notes:S('M7 4.500h10l4.500 4.500v14.500c-5 .5-9.500.5-14.500 0z','M17 4.500v5h4.500M10.500 14h7M10.500 18h5'),
+journal:S('M6 5c3-1 6 0 8 2 2-2 5-3 8-2v16c-3-1-6 0-8 2-2-2-5-3-8-2z','M14 7v16M9 10.500h2M17 10.500h2'),
+knowledge:S('M14 4l2.600 6.400 6.900.5-5.300 4.500 1.700 6.700L14 18.400l-5.900 3.700 1.700-6.700-5.300-4.500 6.900-.5z','M11.500 12.500h.1M16.500 12.500h.1M12 15.500q2 1.500 4 0'),
+bookmark:S('M8 4.500c3.500-.5 8.500-.5 12 0v19l-6-4.500-6 4.500z','M14 9l1 2.200 2.300.3-1.700 1.600.4 2.300-2-1.100-2 1.100.4-2.300-1.700-1.600 2.300-.3z'),
+files:S('M4 9c0-1.200.8-2 2-2h5l2 2.500h9c1.200 0 2 .8 2 2V21c0 1.200-.8 2-2 2H6c-1.200 0-2-.8-2-2z','M4 12.500h20'),
+calendar:S('M5 7.500c5-.6 13-.6 18 0v15.500c-5 .6-13 .6-18 0z','M5 12h18M10 5v4M18 5v4M10 16.500h.1M14 16.500h.1M18 16.500h.1M10 19.800h.1M14 19.800h.1'),
+ideas:S('M14 4.500a6.500 6.500 0 0 0-3.800 11.800c.6.500.8 1.100.8 1.700v.5h6v-.5c0-.6.2-1.200.8-1.700A6.500 6.500 0 0 0 14 4.500z','M11.500 21.500h5M12.500 24h3M14 9v4M12 11h4'),
+finance:S('M14 4c6 0 10 4.200 10 9.800S20 24 14 24 4 19.600 4 14 8 4 14 4z','M14 8v12M11 11h4.200a2.200 2.200 0 0 1 0 4.400H11M11 15.400h4.800a2.200 2.200 0 0 1 0 4.400H11'),
+set:S('M14 8.500a5.500 5.500 0 1 0 .1 0z','M14 4v3M14 21v3M4 14h3M21 14h3M7 7l2 2M19 19l2 2M21 7l-2 2M9 19l-2 2M14 12v4'),
+logo:S('M14 23.500S5 18 5 11.500A4.800 4.800 0 0 1 14 9a4.800 4.800 0 0 1 9 2.500C23 18 14 23.500 14 23.500z','M9 12q1-2 3-2.200')
+};
+for(const k in M)M[k].i=ICO[k];
 const $=s=>document.querySelector(s);
 const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -156,7 +179,7 @@ async function boot(){
  else{try{D=JSON.parse(localStorage.getItem('pw')||'{}')}catch{D={}}push()}
  render();
 }
-function loginUI(){const l=$('#lock');l.hidden=false;l.innerHTML='<div style="font-size:40px">'+(T?T.i:'🌷')+'</div><input id="em" type="email" placeholder="อีเมล" autocomplete="username"><input id="pw" type="password" placeholder="รหัสผ่าน (6 ตัวขึ้นไป)" autocomplete="current-password"><div><button class="add" id="li">เข้าสู่ระบบ</button> <button class="bt" id="su" style="background:var(--mu)">สมัคร</button></div><div id="msg" class="sub" style="max-width:280px;text-align:center"></div>';
+function loginUI(){const l=$('#lock');l.hidden=false;l.innerHTML='<div style="font-size:40px">'+(T?T.i:ICO.logo)+'</div><input id="em" type="email" placeholder="อีเมล" autocomplete="username"><input id="pw" type="password" placeholder="รหัสผ่าน (6 ตัวขึ้นไป)" autocomplete="current-password"><div><button class="add" id="li">เข้าสู่ระบบ</button> <button class="bt" id="su" style="background:var(--mu)">สมัคร</button></div><div id="msg" class="sub" style="max-width:280px;text-align:center"></div>';
  const run=async m=>{const msg=$('#msg');const c={email:$('#em').value.trim(),password:$('#pw').value};
  if(SB_URL.includes('YOUR-')||SB_KEY.includes('YOUR-')){msg.textContent='❌ ยังไม่ได้ใส่ SB_URL / SB_KEY ในไฟล์';return}
  if(!c.email||c.password.length<6){msg.textContent='❌ กรอกอีเมลและรหัสผ่าน (6 ตัวขึ้นไป) ก่อน';return}
@@ -218,12 +241,12 @@ function module(k){const m=M[k];const a=sorted(k).filter(it=>!q||JSON.stringify(
  return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div>${k==='journal'?`<div style="margin-top:10px"><button class="bt" data-gen>✨ สร้างภาพจากข้อความ</button> <span id="gst" class="sub"></span><div id="gpv">${genPv()}</div></div>`:''}</div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
 let galT=null,galI=0;
 function gallery(){const a=sorted('journal').filter(x=>x.img).slice(0,12);
- if(!a.length)return `<div class="card"><h3>🎨 ภาพจากไดอารี่</h3><div class="sub" style="margin:0">ยังไม่มีภาพจาก AI ไปที่ไดอารี่ แล้วกด ✨ สร้างภาพจากข้อความ</div></div>`;
- return `<div class="card" id="gal"><h3>🎨 ภาพจากไดอารี่</h3><div class="gwrap">${a.map((x,i)=>`<figure class="gs${i?'':' on'}"><img data-img="${e(x.img)}" alt="ภาพจากไดอารี่"><figcaption>${e(x.date)} ${e(String(x.body||'').slice(0,40))}</figcaption></figure>`).join('')}</div><div class="gdots">${a.map((_,i)=>`<button data-gal="${i}" class="${i?'':'on'}" aria-label="ภาพที่ ${i+1}"></button>`).join('')}</div></div>`}
+ if(!a.length)return `<div class="card"><h3>${ICO.journal} ภาพจากไดอารี่</h3><div class="sub" style="margin:0">ยังไม่มีภาพจาก AI ไปที่ไดอารี่ แล้วกด ✨ สร้างภาพจากข้อความ</div></div>`;
+ return `<div class="card" id="gal"><h3>${ICO.journal} ภาพจากไดอารี่</h3><div class="gwrap">${a.map((x,i)=>`<figure class="gs${i?'':' on'}"><img data-img="${e(x.img)}" alt="ภาพจากไดอารี่"><figcaption>${e(x.date)} ${e(String(x.body||'').slice(0,40))}</figcaption></figure>`).join('')}</div><div class="gdots">${a.map((_,i)=>`<button data-gal="${i}" class="${i?'':'on'}" aria-label="ภาพที่ ${i+1}"></button>`).join('')}</div></div>`}
 function galShow(i){const s=document.querySelectorAll('#gal .gs'),d=document.querySelectorAll('#gal .gdots button');if(!s.length)return;galI=(i+s.length)%s.length;s.forEach((x,n)=>x.classList.toggle('on',n===galI));d.forEach((x,n)=>x.classList.toggle('on',n===galI))}
 function galStart(){clearInterval(galT);galT=null;if(document.querySelectorAll('#gal .gs').length>1)galT=setInterval(()=>{if(!document.getElementById('gal')){clearInterval(galT);galT=null;return}galShow(galI+1)},5000)}
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-gal]');if(b){galShow(+b.dataset.gal);galStart()}});
-const MC='<svg viewBox="0 0 120 100" style="stroke:none" role="img" aria-label="มาสคอตหน้ายิ้ม"><circle cx="60" cy="54" r="40" fill="#fff"/><circle cx="46" cy="50" r="5" fill="#4a4458"/><circle cx="74" cy="50" r="5" fill="#4a4458"/><circle cx="38" cy="62" r="7" fill="#ffc9d6"/><circle cx="82" cy="62" r="7" fill="#ffc9d6"/><path d="M52 62q8 8 16 0" stroke="#4a4458" stroke-width="3" fill="none"/><path d="M96 12l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fff0a3"/></svg>';
+const MC='<svg viewBox="0 0 120 100" style="stroke:none;filter:url(#wob)" role="img" aria-label="มาสคอตหน้ายิ้ม"><circle cx="60" cy="54" r="40" fill="#fff"/><circle cx="46" cy="50" r="5" fill="#4a4458"/><circle cx="74" cy="50" r="5" fill="#4a4458"/><circle cx="38" cy="62" r="7" fill="#ffc9d6"/><circle cx="82" cy="62" r="7" fill="#ffc9d6"/><path d="M52 62q8 8 16 0" stroke="#4a4458" stroke-width="3" fill="none"/><path d="M96 12l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fff0a3"/></svg>';
 function dash(){const t=today(),mo=t.slice(0,7);
  const open=L('todo').filter(x=>!x.done).sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1).slice(0,5);
  const ev=L('calendar').filter(x=>x.date>=t).sort((a,b)=>a.date>b.date?1:-1).slice(0,4);
@@ -231,18 +254,18 @@ function dash(){const t=today(),mo=t.slice(0,7);
  const done=L('todo').filter(x=>x.done).length,tot=L('todo').length;
  const dt=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  const pct=tot?Math.round(done*100/tot):0;
- return `<section class="hero"><div><h2>${T?T.g:'สวัสดี 🌸'}</h2><div class="sub">${dt} · เสร็จแล้ว ${done}/${tot} งาน</div><div class="pg" role="img" aria-label="ความคืบหน้า ${pct}%"><b style="width:${pct}%"></b></div></div>${MC}</section>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
+ return `<section class="hero"><div><h2>${T?T.g:'สวัสดีจ้า'}</h2><div class="sub">${dt} · เสร็จแล้ว ${done}/${tot} งาน</div><div class="pg" role="img" aria-label="ความคืบหน้า ${pct}%"><b style="width:${pct}%"></b></div></div>${MC}</section>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
 ${gallery()}
 <div class="grid">${Object.entries(M).map(([k,m])=>`<button class="stat" style="--c:${m.c}" data-go="${k}"><i class="ic">${m.i}</i><span>${m.n}</span><b>${L(k).length}</b></button>`).join('')}</div>
-<div class="grid2"><div class="card"><h3>✅ งานที่ต้องทำ (เสร็จ ${done}/${tot})</h3>${open.map(x=>`<div class="it"><input type="checkbox" data-chk="${x.id}"><div class="b"><b>${e(x.title)}</b>${x.due?`<small>ภายใน ${e(x.due)}</small>`:''}</div></div>`).join('')||'<div class="sub">ไม่มีงานค้าง 🎉</div>'}</div>
-<div class="card"><h3>📅 กิจกรรมที่จะถึง</h3>${ev.map(x=>`<div class="it"><div class="b"><b>${e(x.title)}</b><small>${e(x.date)} ${e(x.time)}</small></div></div>`).join('')||'<div class="sub">ยังไม่มีนัดหมาย</div>'}</div>
-<div class="card"><h3>💰 เดือนนี้</h3><div class="in">รายรับ +${inc.toLocaleString()} ฿</div><div class="out">รายจ่าย −${out.toLocaleString()} ฿</div><b>คงเหลือ ${(inc-out).toLocaleString()} ฿</b></div>
-<div class="card"><h3>⚡ จดโน้ตด่วน</h3><div class="form"><textarea id="qn" rows="3" placeholder="คิดอะไรอยู่…"></textarea><button class="add" data-quick>บันทึกเป็นโน้ต</button></div></div></div>`}
-function settings(){return `<h2>⚙️ ตั้งค่า</h2><div class="sub">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ ควรสำรองเป็นระยะ</div><div class="card"><h3>🎨 ธีมตามวันสำคัญ</h3><select onchange="setTheme(this.value)"><option value="auto" ${pref()==='auto'?'selected':''}>อัตโนมัติ (ตามวันที่)</option><option value="off" ${pref()==='off'?'selected':''}>ปิด (ธีมพาสเทลปกติ)</option>${Object.entries(TH).map(([k,t])=>`<option value="${k}" ${pref()===k?'selected':''}>${t.i} ${t.n}</option>`).join('')}</select></div>
-<div class="card"><h3>☁️ บัญชี</h3><div class="sub" id="st">เชื่อมต่อแล้ว</div><button class="bt" onclick="sb.auth.signOut().then(()=>location.reload())">ออกจากระบบ</button></div>
-<div class="card"><h3>💾 สำรอง / นำเข้า</h3><textarea id="bk" rows="6">${e(JSON.stringify(D))}</textarea><div class="form" style="margin-top:8px"><button class="add" data-imp>นำเข้าข้อมูลจากข้อความด้านบน</button></div><div class="sub" style="margin:8px 0 0">คัดลอกข้อความไปเก็บไว้ในไฟล์/โน้ตของคุณเพื่อสำรอง</div></div>`}
+<div class="grid2"><div class="card"><h3>${ICO.todo} งานที่ต้องทำ (เสร็จ ${done}/${tot})</h3>${open.map(x=>`<div class="it"><input type="checkbox" data-chk="${x.id}"><div class="b"><b>${e(x.title)}</b>${x.due?`<small>ภายใน ${e(x.due)}</small>`:''}</div></div>`).join('')||'<div class="sub">ไม่มีงานค้าง 🎉</div>'}</div>
+<div class="card"><h3>${ICO.calendar} กิจกรรมที่จะถึง</h3>${ev.map(x=>`<div class="it"><div class="b"><b>${e(x.title)}</b><small>${e(x.date)} ${e(x.time)}</small></div></div>`).join('')||'<div class="sub">ยังไม่มีนัดหมาย</div>'}</div>
+<div class="card"><h3>${ICO.finance} เดือนนี้</h3><div class="in">รายรับ +${inc.toLocaleString()} ฿</div><div class="out">รายจ่าย −${out.toLocaleString()} ฿</div><b>คงเหลือ ${(inc-out).toLocaleString()} ฿</b></div>
+<div class="card"><h3>${ICO.notes} จดโน้ตด่วน</h3><div class="form"><textarea id="qn" rows="3" placeholder="คิดอะไรอยู่…"></textarea><button class="add" data-quick>บันทึกเป็นโน้ต</button></div></div></div>`}
+function settings(){return `<h2>${ICO.set} ตั้งค่า</h2><div class="sub">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ ควรสำรองเป็นระยะ</div><div class="card"><h3>ธีมตามวันสำคัญ</h3><select onchange="setTheme(this.value)"><option value="auto" ${pref()==='auto'?'selected':''}>อัตโนมัติ (ตามวันที่)</option><option value="off" ${pref()==='off'?'selected':''}>ปิด (ธีมพาสเทลปกติ)</option>${Object.entries(TH).map(([k,t])=>`<option value="${k}" ${pref()===k?'selected':''}>${t.i} ${t.n}</option>`).join('')}</select></div>
+<div class="card"><h3>บัญชี</h3><div class="sub" id="st">เชื่อมต่อแล้ว</div><button class="bt" onclick="sb.auth.signOut().then(()=>location.reload())">ออกจากระบบ</button></div>
+<div class="card"><h3>สำรอง / นำเข้า</h3><textarea id="bk" rows="6">${e(JSON.stringify(D))}</textarea><div class="form" style="margin-top:8px"><button class="add" data-imp>นำเข้าข้อมูลจากข้อความด้านบน</button></div><div class="sub" style="margin:8px 0 0">คัดลอกข้อความไปเก็บไว้ในไฟล์/โน้ตของคุณเพื่อสำรอง</div></div>`}
 function render(){const v=(location.hash||'#dash').slice(1);
- $('#nav').innerHTML=`<h1>${T?T.i:'🌷'} My Workspace</h1>`+[['dash','🏠','แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set','⚙️','ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}"><span class="ni">${i}</span><span class="nn">${n}</span></a>`).join('');try{document.querySelector('#nav a.on').scrollIntoView({inline:'center',block:'nearest'})}catch{}
+ $('#nav').innerHTML=`<h1>${T?T.i:ICO.logo} My Workspace</h1>`+[['dash',ICO.dash,'แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set',ICO.set,'ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}"><span class="ni">${i}</span><span class="nn">${n}</span></a>`).join('');try{document.querySelector('#nav a.on').scrollIntoView({inline:'center',block:'nearest'})}catch{}
  $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();loadImgs();galI=0;galStart()}
 async function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
