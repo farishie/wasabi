@@ -1,0 +1,11 @@
+{
+  "name": "wasabi",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./", "binding": "ASSETS", "run_worker_first": ["/api/*"] },
+  "ai": { "binding": "AI" },
+  "vars": {
+    "SUPABASE_URL": "https://nsyrgwfuoyrwyhdsfkia.supabase.co",
+    "SUPABASE_KEY": "sb_publishable_ใส่คีย์ของคุณ"
+  }
+}

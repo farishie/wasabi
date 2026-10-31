@@ -115,6 +115,18 @@ function applyTheme(){const p=pref(),k=p==='off'?null:p==='auto'?holiday():(TH[p
   for(let i=0;i<14;i++){const s=document.createElement('span');s.textContent=T.d[i%T.d.length];s.style.cssText=`left:${(i*7.3+3)%97}%;animation-duration:${9+(i*3)%8}s;animation-delay:-${(i*2.3)%10}s;font-size:${18+(i*5)%16}px`;w.appendChild(s)}
   document.body.appendChild(w)}}
 function setTheme(v){try{localStorage.setItem('pw_theme',v)}catch{}applyTheme();render()}
+let GEN={};const SU={};
+async function loadImgs(){for(const im of document.querySelectorAll('img[data-img]')){const p=im.dataset.img;if(!SU[p]){const{data}=await sb.storage.from('diary').createSignedUrl(p,3600);SU[p]=data&&data.signedUrl}if(SU[p])im.src=SU[p]}}
+async function gen(){const txt=($('#f_body')?.value||'').trim(),st=$('#gst');
+ if(!txt){st.textContent='เขียนข้อความในช่องก่อนนะ';return}
+ const{data:{session}}=await sb.auth.getSession();if(!session){st.textContent='กรุณาล็อกอินใหม่';return}
+ st.textContent='🎨 กำลังวาดภาพ… (ประมาณ 10–30 วินาที)';
+ try{const r=await fetch('/api/image',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({text:txt})});
+  if(!r.ok)throw new Error(r.status===401?'ยังไม่ได้ล็อกอิน':'สร้างภาพไม่สำเร็จ ('+r.status+')');
+  const b=await r.blob();if(GEN.url)URL.revokeObjectURL(GEN.url);GEN={blob:b,url:URL.createObjectURL(b)};
+  $('#gpv').innerHTML=`<img src="${GEN.url}" alt="ภาพจากไดอารี่" style="max-width:260px;width:100%;border-radius:16px;margin-top:8px">`;
+  st.textContent='ถูกใจไหม? กด "+ เพิ่ม" เพื่อบันทึกพร้อมรูป หรือกดสร้างใหม่'}
+ catch(x){st.textContent='❌ '+x.message}}
 let q='';
 function inp([k,l,t,o]){const id='f_'+k;let x;
  if(t==='a')return `<textarea id="${id}" placeholder="${l}" rows="3"></textarea>`;
@@ -124,11 +136,11 @@ function inp([k,l,t,o]){const id='f_'+k;let x;
 function item(m,k,it){const f=m.f;let head=k==='journal'?`${e(it.date)} ${e(it.mood)}`:e(it[f[0][0]]);
  const rest=(k==='journal'?[it.body]:f.slice(1).map(x=>x[2]==='u'&&it[x[0]]?`<a href="${e(it[x[0]])}" target="_blank" rel="noopener noreferrer">${e(it[x[0]])}</a>`:e(it[x[0]]))).filter(Boolean);
  if(k==='finance')head=`<span class="${it.type==='รายรับ'?'in':'out'}">${it.type==='รายรับ'?'+':'−'}${Number(it.amt).toLocaleString()} ฿</span> ${e(it.title)}`,rest.splice(0,rest.length,e(it.date));
- return `<div class="it ${it.done?'dn':''}">${k==='todo'?`<input type="checkbox" data-chk="${it.id}" ${it.done?'checked':''}>`:''}<div class="b"><b>${head}</b>${rest.length?`<small>${k==='bookmark'||k==='files'?rest.join(' · '):rest.join(' · ')}</small>`:''}</div><button class="x" data-del="${k}:${it.id}" aria-label="ลบ">✕</button></div>`}
+ return `<div class="it ${it.done?'dn':''}">${k==='todo'?`<input type="checkbox" data-chk="${it.id}" ${it.done?'checked':''}>`:''}<div class="b"><b>${head}</b>${rest.length?`<small>${k==='bookmark'||k==='files'?rest.join(' · '):rest.join(' · ')}</small>`:''}${it.img?`<img data-img="${e(it.img)}" alt="" style="display:block;max-width:200px;width:100%;min-height:60px;border-radius:14px;margin-top:8px;background:var(--ln)">`:''}</div><button class="x" data-del="${k}:${it.id}" aria-label="ลบ">✕</button></div>`}
 function sorted(k){const a=[...L(k)];if(k==='calendar')return a.sort((x,y)=>(x.date+x.time)>(y.date+y.time)?1:-1);if(k==='finance'||k==='journal')return a.sort((x,y)=>y.date>x.date?1:-1);return a.sort((x,y)=>y.id-x.id)}
 function module(k){const m=M[k];const a=sorted(k).filter(it=>!q||JSON.stringify(it).toLowerCase().includes(q.toLowerCase()));
  let sum='';if(k==='finance'){const t=L(k);const inc=t.filter(x=>x.type==='รายรับ').reduce((s,x)=>s+ +x.amt,0),out=t.filter(x=>x.type!=='รายรับ').reduce((s,x)=>s+ +x.amt,0);sum=`<div class="grid"><div class="stat" style="--c:#cdeab8"><span>รายรับ</span><b>${inc.toLocaleString()}</b></div><div class="stat" style="--c:#ffc9d6"><span>รายจ่าย</span><b>${out.toLocaleString()}</b></div><div class="stat" style="--c:#bddcff"><span>คงเหลือ</span><b>${(inc-out).toLocaleString()}</b></div></div>`}
- return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div></div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
+ return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div>${k==='journal'?`<div style="margin-top:10px"><button class="bt" data-gen>✨ สร้างภาพจากข้อความ</button> <span id="gst" class="sub"></span><div id="gpv">${GEN.url?`<img src="${GEN.url}" alt="" style="max-width:260px;width:100%;border-radius:16px;margin-top:8px">`:''}</div></div>`:''}</div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
 function dash(){const t=today(),mo=t.slice(0,7);
  const open=L('todo').filter(x=>!x.done).sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1).slice(0,5);
  const ev=L('calendar').filter(x=>x.date>=t).sort((a,b)=>a.date>b.date?1:-1).slice(0,4);
@@ -146,13 +158,13 @@ function settings(){return `<h2>⚙️ ตั้งค่า</h2><div class="sub
 <div class="card"><h3>💾 สำรอง / นำเข้า</h3><textarea id="bk" rows="6">${e(JSON.stringify(D))}</textarea><div class="form" style="margin-top:8px"><button class="add" data-imp>นำเข้าข้อมูลจากข้อความด้านบน</button></div><div class="sub" style="margin:8px 0 0">คัดลอกข้อความไปเก็บไว้ในไฟล์/โน้ตของคุณเพื่อสำรอง</div></div>`}
 function render(){const v=(location.hash||'#dash').slice(1);
  $('#nav').innerHTML=`<h1>${T?T.i:'🌷'} My Workspace</h1>`+[['dash','🏠','แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set','⚙️','ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}">${i} ${n}</a>`).join('');
- $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();}
-function add(k){const m=M[k],o={id:Date.now()};
+ $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();loadImgs()}
+async function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
- if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;L(k).push(o);save();render()}
-document.addEventListener('click',ev=>{const t=ev.target.closest('[data-add],[data-del],[data-chk],[data-go],[data-quick],[data-pin],[data-nopin],[data-imp]');if(!t)return;const d=t.dataset;
- if(d.add)add(d.add);
- else if(d.del){const[k,id]=d.del.split(':');D[k]=L(k).filter(x=>x.id!=id);save();render()}
+ if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;if(k==='journal'&&GEN.blob){const p=uid+'/'+o.id+'.jpg';const{error}=await sb.storage.from('diary').upload(p,GEN.blob,{contentType:'image/jpeg'});if(error)alert('บันทึกรูปไม่สำเร็จ: '+error.message);else o.img=p;GEN={}}L(k).push(o);save();render()}
+document.addEventListener('click',ev=>{const t=ev.target.closest('[data-add],[data-del],[data-chk],[data-go],[data-quick],[data-pin],[data-nopin],[data-imp],[data-gen]');if(!t)return;const d=t.dataset;
+ if(d.add)add(d.add);else if(d.gen)gen();
+ else if(d.del){const[k,id]=d.del.split(':');const old=L(k).find(x=>x.id==id);if(old&&old.img)sb.storage.from('diary').remove([old.img]);D[k]=L(k).filter(x=>x.id!=id);save();render()}
  else if(d.go)location.hash=d.go;
  else if(d.quick){const v=$('#qn').value.trim();if(v){L('notes').push({id:Date.now(),title:v.slice(0,40),body:v});save();render()}}
  else if(d.pin){const p=$('#pin').value;if(/^\d{4,8}$/.test(p)){try{localStorage.setItem('pw_pin',btoa('pw'+p))}catch{}alert('ตั้ง PIN แล้ว')}else alert('PIN ต้องเป็นตัวเลข 4–8 หลัก')}
