@@ -14,7 +14,7 @@ export default {
     try { ({ text } = await req.json()); } catch (e) { return new Response('bad request', { status: 400 }); }
     let scene = String(text || '').slice(0, 600);
 
-    // แปลงข้อความไดอารี่เป็นคำอธิบายภาพสั้นๆ ภาษาอังกฤษ
+    // 1) ให้ AI แปลงข้อความไดอารี่ (ภาษาไทยก็ได้) เป็นคำอธิบายภาพอังกฤษสั้นๆ
     try {
       const r = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
@@ -28,13 +28,19 @@ export default {
 
     const prompt = 'cute hand-drawn line art illustration, soft pastel colors, thin simple outlines, kawaii, whimsical, white background, ' + scene;
 
+    // 2) สร้างภาพด้วย FLUX
     try {
       const out = await env.AI.run('@cf/black-forest-labs/flux-1-schnell', { prompt, steps: 4 });
-      if (!out || !out.image) return new Response('no image returned', { status: 502 });
-      const bin = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0));
-      return new Response(bin, { headers: { 'Content-Type': 'image/jpeg' } });
+      let body;
+      if (out && typeof out.image === 'string') {
+        body = Uint8Array.from(atob(out.image), (c) => c.charCodeAt(0)); // base64 -> bytes
+      } else if (out instanceof ReadableStream || out instanceof ArrayBuffer || out instanceof Uint8Array) {
+        body = out; // บางโมเดลคืนไฟล์รูปตรงๆ
+      } else {
+        return new Response('no image returned', { status: 502 });
+      }
+      return new Response(body, { headers: { 'Content-Type': 'image/jpeg', 'Cache-Control': 'no-store' } });
     } catch (e) {
-      // ส่ง error กลับมาให้เห็นใน Network/Console และ wrangler tail
       console.error('image error:', e && e.message);
       return new Response('image error: ' + (e && e.message), { status: 500 });
     }

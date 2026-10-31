@@ -117,16 +117,18 @@ function applyTheme(){const p=pref(),k=p==='off'?null:p==='auto'?holiday():(TH[p
 function setTheme(v){try{localStorage.setItem('pw_theme',v)}catch{}applyTheme();render()}
 let GEN={};const SU={};
 async function loadImgs(){for(const im of document.querySelectorAll('img[data-img]')){const p=im.dataset.img;if(!SU[p]){const{data}=await sb.storage.from('diary').createSignedUrl(p,3600);SU[p]=data&&data.signedUrl}if(SU[p])im.src=SU[p]}}
-async function gen(){const txt=($('#f_body')?.value||'').trim(),st=$('#gst');
+function genPv(){return GEN.url?`<img src="${GEN.url}" alt="ภาพจากไดอารี่" style="max-width:260px;width:100%;border-radius:16px;margin-top:8px"><div><a href="${GEN.url}" download="diary-${Date.now()}.jpg" class="sub">⬇️ ดาวน์โหลดรูป</a></div>`:''}
+async function gen(){const txt=($('#f_body')?.value||'').trim(),st=$('#gst'),bt=$('[data-gen]');
  if(!txt){st.textContent='เขียนข้อความในช่องก่อนนะ';return}
  const{data:{session}}=await sb.auth.getSession();if(!session){st.textContent='กรุณาล็อกอินใหม่';return}
- st.textContent='🎨 กำลังวาดภาพ… (ประมาณ 10–30 วินาที)';
+ st.textContent='🎨 กำลังวาดภาพ… (ประมาณ 10–30 วินาที)';if(bt)bt.disabled=true;
  try{const r=await fetch('/api/image',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify({text:txt})});
-  if(!r.ok)throw new Error(r.status===401?'ยังไม่ได้ล็อกอิน':'สร้างภาพไม่สำเร็จ ('+r.status+')');
+  if(!r.ok){const m=await r.text().catch(()=>'');throw new Error(r.status===401?'ยังไม่ได้ล็อกอิน (ลองออกจากระบบแล้วเข้าใหม่)':'สร้างภาพไม่สำเร็จ ('+r.status+') '+m.slice(0,120))}
   const b=await r.blob();if(GEN.url)URL.revokeObjectURL(GEN.url);GEN={blob:b,url:URL.createObjectURL(b)};
-  $('#gpv').innerHTML=`<img src="${GEN.url}" alt="ภาพจากไดอารี่" style="max-width:260px;width:100%;border-radius:16px;margin-top:8px">`;
+  $('#gpv').innerHTML=genPv();
   st.textContent='ถูกใจไหม? กด "+ เพิ่ม" เพื่อบันทึกพร้อมรูป หรือกดสร้างใหม่'}
- catch(x){st.textContent='❌ '+x.message}}
+ catch(x){st.textContent='❌ '+x.message}
+ finally{if(bt)bt.disabled=false}}
 let q='';
 function inp([k,l,t,o]){const id='f_'+k;let x;
  if(t==='a')return `<textarea id="${id}" placeholder="${l}" rows="3"></textarea>`;
@@ -140,7 +142,7 @@ function item(m,k,it){const f=m.f;let head=k==='journal'?`${e(it.date)} ${e(it.m
 function sorted(k){const a=[...L(k)];if(k==='calendar')return a.sort((x,y)=>(x.date+x.time)>(y.date+y.time)?1:-1);if(k==='finance'||k==='journal')return a.sort((x,y)=>y.date>x.date?1:-1);return a.sort((x,y)=>y.id-x.id)}
 function module(k){const m=M[k];const a=sorted(k).filter(it=>!q||JSON.stringify(it).toLowerCase().includes(q.toLowerCase()));
  let sum='';if(k==='finance'){const t=L(k);const inc=t.filter(x=>x.type==='รายรับ').reduce((s,x)=>s+ +x.amt,0),out=t.filter(x=>x.type!=='รายรับ').reduce((s,x)=>s+ +x.amt,0);sum=`<div class="grid"><div class="stat" style="--c:#cdeab8"><span>รายรับ</span><b>${inc.toLocaleString()}</b></div><div class="stat" style="--c:#ffc9d6"><span>รายจ่าย</span><b>${out.toLocaleString()}</b></div><div class="stat" style="--c:#bddcff"><span>คงเหลือ</span><b>${(inc-out).toLocaleString()}</b></div></div>`}
- return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div>${k==='journal'?`<div style="margin-top:10px"><button class="bt" data-gen>✨ สร้างภาพจากข้อความ</button> <span id="gst" class="sub"></span><div id="gpv">${GEN.url?`<img src="${GEN.url}" alt="" style="max-width:260px;width:100%;border-radius:16px;margin-top:8px">`:''}</div></div>`:''}</div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
+ return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div>${k==='journal'?`<div style="margin-top:10px"><button class="bt" data-gen>✨ สร้างภาพจากข้อความ</button> <span id="gst" class="sub"></span><div id="gpv">${genPv()}</div></div>`:''}</div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
 function dash(){const t=today(),mo=t.slice(0,7);
  const open=L('todo').filter(x=>!x.done).sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1).slice(0,5);
  const ev=L('calendar').filter(x=>x.date>=t).sort((a,b)=>a.date>b.date?1:-1).slice(0,4);
@@ -161,7 +163,7 @@ function render(){const v=(location.hash||'#dash').slice(1);
  $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();loadImgs()}
 async function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
- if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;if(k==='journal'&&GEN.blob){const p=uid+'/'+o.id+'.jpg';const{error}=await sb.storage.from('diary').upload(p,GEN.blob,{contentType:'image/jpeg'});if(error)alert('บันทึกรูปไม่สำเร็จ: '+error.message);else o.img=p;GEN={}}L(k).push(o);save();render()}
+ if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;if(k==='journal'&&GEN.blob){const p=uid+'/'+o.id+'.jpg';const{error}=await sb.storage.from('diary').upload(p,GEN.blob,{contentType:'image/jpeg',upsert:true});if(error)alert('บันทึกรูปไม่สำเร็จ: '+error.message);else o.img=p;GEN={}}L(k).push(o);save();render()}
 document.addEventListener('click',ev=>{const t=ev.target.closest('[data-add],[data-del],[data-chk],[data-go],[data-quick],[data-pin],[data-nopin],[data-imp],[data-gen]');if(!t)return;const d=t.dataset;
  if(d.add)add(d.add);else if(d.gen)gen();
  else if(d.del){const[k,id]=d.del.split(':');const old=L(k).find(x=>x.id==id);if(old&&old.img)sb.storage.from('diary').remove([old.img]);D[k]=L(k).filter(x=>x.id!=id);save();render()}
