@@ -5,19 +5,19 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#fdf8f5;--card:#fff;--tx:#4a4458;--mu:#8b8499;--ln:#eee6ee;--ac:#b7a4ee;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1b26;--card:#292535;--tx:#ece8f5;--mu:#a29bb5;--ln:#3a3548;--ac:#9a86e0;color-scheme:dark}}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1e1b26;--card:#292535;--tx:#ece8f5;--mu:#a29bb5;--ln:#3a3548;--ac:#9a86e0;--mix:30%;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#1e1b26;--card:#292535;--tx:#ece8f5;--mu:#a29bb5;--ln:#3a3548;--ac:#9a86e0;color-scheme:dark}
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font-family:'Prompt','Noto Sans Thai',system-ui,sans-serif;display:flex;min-height:100vh}
 nav{width:210px;padding:16px 12px;position:sticky;top:0;height:100vh;overflow:auto;flex-shrink:0}
 nav h1{font-size:18px;margin:4px 8px 14px}
 nav a{display:flex;gap:8px;align-items:center;padding:9px 12px;border-radius:14px;color:var(--tx);text-decoration:none;font-size:14px;margin-bottom:3px}
-nav a.on{background:color-mix(in srgb,var(--c,var(--ac)) 60%,var(--card));font-weight:600}
+nav a.on{background:color-mix(in srgb,var(--c,var(--ac)) var(--mix,60%),var(--card));font-weight:600}
 main{flex:1;padding:20px;max-width:960px;min-width:0}
 h2{margin:0 0 4px;font-size:22px}.sub{color:var(--mu);font-size:14px;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.stat{border:0;border-radius:18px;padding:14px;text-align:left;cursor:pointer;color:var(--tx);font:inherit;background:color-mix(in srgb,var(--c) 55%,var(--card))}
+.stat{border:0;border-radius:18px;padding:14px;text-align:left;cursor:pointer;color:var(--tx);font:inherit;background:color-mix(in srgb,var(--c) var(--mix,55%),var(--card))}
 .stat b{display:block;font-size:26px}.stat span{font-size:13px}
 .card{background:var(--card);border:1px solid var(--ln);border-radius:20px;padding:16px;margin-bottom:12px}
 .card h3{margin:0 0 10px;font-size:15px}
@@ -25,7 +25,7 @@ h2{margin:0 0 4px;font-size:22px}.sub{color:var(--mu);font-size:14px;margin-bott
 label{font-size:12px;color:var(--mu);display:flex;flex-direction:column;gap:3px}
 input,textarea,select{font:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--ln);border-radius:12px;background:var(--bg);color:var(--tx);width:100%}
 textarea{resize:vertical;grid-column:1/-1}
-button.add,button.bt{background:var(--ac);color:#fff;border:0;border-radius:12px;padding:10px 16px;font:inherit;cursor:pointer}
+button.add,button.bt{background:var(--ac);color:var(--on,#fff);border:0;border-radius:12px;padding:10px 16px;font:inherit;cursor:pointer}
 .it{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--ln)}
 .it:last-child{border:0}.it .b{flex:1;min-width:0;overflow-wrap:anywhere}.it small{color:var(--mu);display:block;white-space:pre-wrap}
 .it.dn b{text-decoration:line-through;color:var(--mu)}
@@ -36,7 +36,20 @@ a{color:var(--ac)}
 #lock{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:9}
 #lock[hidden]{display:none}
 #lock input{width:200px;text-align:center;font-size:20px}
-@media(max-width:700px){body{flex-direction:column}nav{width:100%;height:auto;position:static;display:flex;gap:4px;padding:10px;overflow-x:auto}nav h1{display:none}nav a{white-space:nowrap;margin:0}main{padding:14px}}
+@media(max-width:700px){body{flex-direction:column}nav{width:100%;height:auto;position:relative;z-index:1;display:flex;gap:4px;padding:10px;overflow-x:auto}nav h1{display:none}nav a{white-space:nowrap;margin:0}main{padding:14px}}
+
+.fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.fx span{position:absolute;top:-50px;opacity:.6;animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(112vh) rotate(40deg)}}
+main{position:relative;z-index:1}nav{z-index:1}
+:root[data-holiday="halloween"]{--bg:#1c1328;--card:#2a1c3d;--tx:#f5ecff;--mu:#b7a5d1;--ln:#46325f;--ac:#ff8a2b;--on:#2a1c3d;--mix:30%;color-scheme:dark}
+:root[data-holiday="halloween"] body{background:radial-gradient(circle at 85% 0,#3d2159,var(--bg) 55%) fixed}
+:root[data-holiday="christmas"]{--bg:#f6fbf6;--card:#fff;--tx:#3d4a40;--mu:#7a8a7e;--ln:#dfeadf;--ac:#d9534f;--mix:55%;color-scheme:light}
+:root[data-holiday="newyear"]{--bg:#fffaf0;--card:#fff;--tx:#4a4230;--mu:#8a8068;--ln:#f1e6c8;--ac:#e0a526;--on:#3a2a00;--mix:55%;color-scheme:light}
+:root[data-holiday="valentine"]{--bg:#fff5f8;--card:#fff;--tx:#5a3a46;--mu:#98788a;--ln:#f8dfe7;--ac:#e8668b;--mix:55%;color-scheme:light}
+:root[data-holiday="songkran"]{--bg:#f1faff;--card:#fff;--tx:#34506a;--mu:#6f8aa0;--ln:#d6ecf7;--ac:#3f9fd3;--mix:55%;color-scheme:light}
+:root[data-holiday="mother"]{--bg:#f1f6ff;--card:#fff;--tx:#34456a;--mu:#7080a5;--ln:#dbe5fb;--ac:#5b8def;--mix:55%;color-scheme:light}
+:root[data-holiday="father"]{--bg:#fffbea;--card:#fff;--tx:#4f4520;--mu:#8f844f;--ln:#f3ebc4;--ac:#e5b800;--on:#3a2a00;--mix:55%;color-scheme:light}
 </style></head><body>
 <nav id="nav"></nav><main id="main"></main><div id="lock" hidden></div>
 <script>
@@ -54,7 +67,7 @@ finance:{n:'การเงิน',i:'💰',c:'#cdeab8',f:[['title','ราย�
 const $=s=>document.querySelector(s);
 const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
-const SB_URL='https://nsyrgwfuoyrwyhdsfkia.supabase.co',SB_KEY='sb_publishable_LJjFWwcr9Ps2k15ItZwNOQ_j8sf9hIv';
+const SB_URL='https://YOUR-PROJECT.supabase.co',SB_KEY='YOUR-ANON-KEY';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 let D={},uid=null,tm=null;
 const setSt=t=>{const x=$('#st');if(x)x.textContent=t};
@@ -70,10 +83,38 @@ async function boot(){
  else{try{D=JSON.parse(localStorage.getItem('pw')||'{}')}catch{D={}}push()}
  render();
 }
-function loginUI(){const l=$('#lock');l.hidden=false;l.innerHTML='<div style="font-size:40px">🌷</div><input id="em" type="email" placeholder="อีเมล" autocomplete="username"><input id="pw" type="password" placeholder="รหัสผ่าน (6 ตัวขึ้นไป)" autocomplete="current-password"><div><button class="add" id="li">เข้าสู่ระบบ</button> <button class="bt" id="su" style="background:var(--mu)">สมัคร</button></div><div id="msg" class="sub"></div>';
- const run=async m=>{const c={email:$('#em').value.trim(),password:$('#pw').value};const{error}=m==='in'?await sb.auth.signInWithPassword(c):await sb.auth.signUp(c);$('#msg').textContent=error?error.message:(m==='up'?'สมัครแล้ว ถ้าระบบส่งอีเมลยืนยันให้กดยืนยันก่อน แล้วเข้าสู่ระบบ':'');if(!error&&m==='in'){l.hidden=true;boot()}};
+function loginUI(){const l=$('#lock');l.hidden=false;l.innerHTML='<div style="font-size:40px">'+(T?T.i:'🌷')+'</div><input id="em" type="email" placeholder="อีเมล" autocomplete="username"><input id="pw" type="password" placeholder="รหัสผ่าน (6 ตัวขึ้นไป)" autocomplete="current-password"><div><button class="add" id="li">เข้าสู่ระบบ</button> <button class="bt" id="su" style="background:var(--mu)">สมัคร</button></div><div id="msg" class="sub" style="max-width:280px;text-align:center"></div>';
+ const run=async m=>{const msg=$('#msg');const c={email:$('#em').value.trim(),password:$('#pw').value};
+ if(SB_URL.includes('YOUR-')||SB_KEY.includes('YOUR-')){msg.textContent='❌ ยังไม่ได้ใส่ SB_URL / SB_KEY ในไฟล์';return}
+ if(!c.email||c.password.length<6){msg.textContent='❌ กรอกอีเมลและรหัสผ่าน (6 ตัวขึ้นไป) ก่อน';return}
+ msg.textContent='กำลังดำเนินการ…';
+ try{const r=m==='in'?await sb.auth.signInWithPassword(c):await sb.auth.signUp(c);
+  if(r.error){msg.textContent='❌ '+r.error.message;return}
+  if(m==='up'&&!r.data.session){msg.textContent='✅ สมัครแล้ว ถ้าระบบส่งอีเมลยืนยัน ให้กดลิงก์ในอีเมลก่อน แล้วกด เข้าสู่ระบบ';return}
+  l.hidden=true;boot()}catch(x){msg.textContent='❌ เชื่อมต่อไม่ได้: '+(x&&x.message||x)}};
+ $('#pw').onkeydown=x=>{if(x.key==='Enter')run('in')};
  $('#li').onclick=()=>run('in');$('#su').onclick=()=>run('up')}
 const L=k=>D[k]||(D[k]=[]);
+const TH={
+halloween:{n:'ฮาโลวีน',i:'🎃',g:'Happy Halloween 🎃',m:'สุขสันต์วันฮาโลวีน! รีบเคลียร์งานค้างก่อนผีจะมาเยือน 👻',d:['🎃','👻','🦇','🕷️','🍬']},
+christmas:{n:'คริสต์มาส',i:'🎄',g:'Merry Christmas 🎄',m:'สุขสันต์วันคริสต์มาส ขอให้อบอุ่นและมีความสุข ❄️',d:['🎄','❄️','🎁','⭐']},
+newyear:{n:'ปีใหม่',i:'🎆',g:'สวัสดีปีใหม่ 🎆',m:'ปีใหม่แล้ว! ลองจดเป้าหมายใหม่ไว้ในหมวดไอเดียดูนะ ✨',d:['🎆','✨','🎉','🥂']},
+valentine:{n:'วาเลนไทน์',i:'💗',g:'Happy Valentine 💗',m:'สุขสันต์วันแห่งความรัก อย่าลืมรักตัวเองด้วย 💗',d:['💗','💕','🌹','💌']},
+songkran:{n:'สงกรานต์',i:'💦',g:'สุขสันต์วันสงกรานต์ 💦',m:'สงกรานต์นี้ขอให้เย็นฉ่ำ สนุก และปลอดภัย 🌼',d:['💦','🌼','🪣','🌸']},
+mother:{n:'วันแม่',i:'💙',g:'สุขสันต์วันแม่ 💙',m:'วันนี้โทรหาหรือกอดแม่สักครั้งนะ 💙',d:['💙','🌸','🤍']},
+father:{n:'วันพ่อ',i:'💛',g:'สุขสันต์วันพ่อ 💛',m:'วันนี้อย่าลืมบอกรักพ่อ 💛',d:['💛','🌼','⭐']}};
+function holiday(d=new Date()){const m=d.getMonth()+1,x=d.getDate();
+ if(m==10&&x>=25)return'halloween';if(m==12&&x>=20&&x<=26)return'christmas';if((m==12&&x>=29)||(m==1&&x<=2))return'newyear';
+ if(m==2&&x>=10&&x<=14)return'valentine';if(m==4&&x>=12&&x<=16)return'songkran';if(m==8&&x>=10&&x<=12)return'mother';if(m==12&&x>=3&&x<=5)return'father';return null}
+let T=null;
+const pref=()=>{try{return localStorage.getItem('pw_theme')||'auto'}catch{return'auto'}};
+function applyTheme(){const p=pref(),k=p==='off'?null:p==='auto'?holiday():(TH[p]?p:null);T=k?TH[k]:null;const r=document.documentElement;
+ if(k)r.dataset.holiday=k;else delete r.dataset.holiday;
+ document.querySelectorAll('.fx').forEach(n=>n.remove());
+ if(T&&!matchMedia('(prefers-reduced-motion:reduce)').matches){const w=document.createElement('div');w.className='fx';w.setAttribute('aria-hidden','true');
+  for(let i=0;i<14;i++){const s=document.createElement('span');s.textContent=T.d[i%T.d.length];s.style.cssText=`left:${(i*7.3+3)%97}%;animation-duration:${9+(i*3)%8}s;animation-delay:-${(i*2.3)%10}s;font-size:${18+(i*5)%16}px`;w.appendChild(s)}
+  document.body.appendChild(w)}}
+function setTheme(v){try{localStorage.setItem('pw_theme',v)}catch{}applyTheme();render()}
 let q='';
 function inp([k,l,t,o]){const id='f_'+k;let x;
  if(t==='a')return `<textarea id="${id}" placeholder="${l}" rows="3"></textarea>`;
@@ -94,17 +135,17 @@ function dash(){const t=today(),mo=t.slice(0,7);
  const fm=L('finance').filter(x=>(x.date||'').startsWith(mo));const inc=fm.filter(x=>x.type==='รายรับ').reduce((s,x)=>s+ +x.amt,0),out=fm.filter(x=>x.type!=='รายรับ').reduce((s,x)=>s+ +x.amt,0);
  const done=L('todo').filter(x=>x.done).length,tot=L('todo').length;
  const dt=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- return `<h2>สวัสดี 🌸</h2><div class="sub">${dt}</div>
+ return `<h2>${T?T.g:'สวัสดี 🌸'}</h2><div class="sub">${dt}</div>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
 <div class="grid">${Object.entries(M).map(([k,m])=>`<button class="stat" style="--c:${m.c}" data-go="${k}"><span>${m.i} ${m.n}</span><b>${L(k).length}</b></button>`).join('')}</div>
 <div class="grid2"><div class="card"><h3>✅ งานที่ต้องทำ (เสร็จ ${done}/${tot})</h3>${open.map(x=>`<div class="it"><input type="checkbox" data-chk="${x.id}"><div class="b"><b>${e(x.title)}</b>${x.due?`<small>ภายใน ${e(x.due)}</small>`:''}</div></div>`).join('')||'<div class="sub">ไม่มีงานค้าง 🎉</div>'}</div>
 <div class="card"><h3>📅 กิจกรรมที่จะถึง</h3>${ev.map(x=>`<div class="it"><div class="b"><b>${e(x.title)}</b><small>${e(x.date)} ${e(x.time)}</small></div></div>`).join('')||'<div class="sub">ยังไม่มีนัดหมาย</div>'}</div>
 <div class="card"><h3>💰 เดือนนี้</h3><div class="in">รายรับ +${inc.toLocaleString()} ฿</div><div class="out">รายจ่าย −${out.toLocaleString()} ฿</div><b>คงเหลือ ${(inc-out).toLocaleString()} ฿</b></div>
 <div class="card"><h3>⚡ จดโน้ตด่วน</h3><div class="form"><textarea id="qn" rows="3" placeholder="คิดอะไรอยู่…"></textarea><button class="add" data-quick>บันทึกเป็นโน้ต</button></div></div></div>`}
-function settings(){return `<h2>⚙️ ตั้งค่า</h2><div class="sub">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ ควรสำรองเป็นระยะ</div>
+function settings(){return `<h2>⚙️ ตั้งค่า</h2><div class="sub">ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ ควรสำรองเป็นระยะ</div><div class="card"><h3>🎨 ธีมตามวันสำคัญ</h3><select onchange="setTheme(this.value)"><option value="auto" ${pref()==='auto'?'selected':''}>อัตโนมัติ (ตามวันที่)</option><option value="off" ${pref()==='off'?'selected':''}>ปิด (ธีมพาสเทลปกติ)</option>${Object.entries(TH).map(([k,t])=>`<option value="${k}" ${pref()===k?'selected':''}>${t.i} ${t.n}</option>`).join('')}</select></div>
 <div class="card"><h3>☁️ บัญชี</h3><div class="sub" id="st">เชื่อมต่อแล้ว</div><button class="bt" onclick="sb.auth.signOut().then(()=>location.reload())">ออกจากระบบ</button></div>
 <div class="card"><h3>💾 สำรอง / นำเข้า</h3><textarea id="bk" rows="6">${e(JSON.stringify(D))}</textarea><div class="form" style="margin-top:8px"><button class="add" data-imp>นำเข้าข้อมูลจากข้อความด้านบน</button></div><div class="sub" style="margin:8px 0 0">คัดลอกข้อความไปเก็บไว้ในไฟล์/โน้ตของคุณเพื่อสำรอง</div></div>`}
 function render(){const v=(location.hash||'#dash').slice(1);
- $('#nav').innerHTML='<h1>🌷 My Workspace</h1>'+[['dash','🏠','แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set','⚙️','ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}">${i} ${n}</a>`).join('');
+ $('#nav').innerHTML=`<h1>${T?T.i:'🌷'} My Workspace</h1>`+[['dash','🏠','แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set','⚙️','ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}">${i} ${n}</a>`).join('');
  $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();}
 function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
@@ -121,5 +162,5 @@ document.addEventListener('change',ev=>{const id=ev.target.dataset.chk;if(!id)re
 document.addEventListener('input',ev=>{if(ev.target.id==='q'){q=ev.target.value;const p=ev.target.selectionStart;render();const n=$('#q');n.focus();n.setSelectionRange(p,p)}});
 document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.matches('.form input:not([type=date])')){const b=ev.target.closest('.card').querySelector('[data-add]');b&&b.click()}});
 addEventListener('hashchange',()=>{q='';render()});
-boot();
+applyTheme();boot();
 </script>
