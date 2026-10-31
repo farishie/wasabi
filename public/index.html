@@ -165,7 +165,7 @@ async function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
  if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;if(k==='journal'&&GEN.blob){const p=uid+'/'+o.id+'.jpg';const{error}=await sb.storage.from('diary').upload(p,GEN.blob,{contentType:'image/jpeg',upsert:true});if(error)alert('บันทึกรูปไม่สำเร็จ: '+error.message);else o.img=p;GEN={}}L(k).push(o);save();render()}
 document.addEventListener('click',ev=>{const t=ev.target.closest('[data-add],[data-del],[data-chk],[data-go],[data-quick],[data-pin],[data-nopin],[data-imp],[data-gen]');if(!t)return;const d=t.dataset;
- if(d.add)add(d.add);else if(d.gen)gen();
+ if(d.add)add(d.add);else if('gen' in d)gen();
  else if(d.del){const[k,id]=d.del.split(':');const old=L(k).find(x=>x.id==id);if(old&&old.img)sb.storage.from('diary').remove([old.img]);D[k]=L(k).filter(x=>x.id!=id);save();render()}
  else if(d.go)location.hash=d.go;
  else if(d.quick){const v=$('#qn').value.trim();if(v){L('notes').push({id:Date.now(),title:v.slice(0,40),body:v});save();render()}}
