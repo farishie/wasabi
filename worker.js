@@ -14,17 +14,30 @@ export default {
     try { ({ text } = await req.json()); } catch (e) { return new Response('bad request', { status: 400 }); }
     let scene = String(text || '').slice(0, 600);
 
-    // 1) ให้ AI แปลงข้อความไดอารี่ (ภาษาไทยก็ได้) เป็นคำอธิบายภาพอังกฤษสั้นๆ
+    // 1) ให้ AI แปลข้อความไดอารี่ (ไทยหรืออังกฤษ) เป็นคำบรรยายภาพภาษาอังกฤษสั้นๆ
+    //    FLUX เข้าใจเฉพาะภาษาอังกฤษ จึงต้องแปลก่อนเสมอ
+    let translated = false;
     try {
       const r = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
         messages: [
-          { role: 'system', content: 'Turn the diary entry into ONE short English visual scene description (max 25 words) for an illustration. No names, no written text in the image. Output only the description.' },
+          {
+            role: 'system',
+            content:
+              'You convert a personal diary entry, which may be written in Thai or English, into ONE short English visual scene description for an illustration. ' +
+              'Translate Thai to English first, pick the main moment, mood and objects, and describe what we would SEE (setting, objects, weather, expression). ' +
+              'Max 30 words. No people\'s names, no written text or letters in the image. Output only the English description, with no quotes and no explanation.',
+          },
           { role: 'user', content: scene },
         ],
-        max_tokens: 60,
+        max_tokens: 80,
+        temperature: 0.4,
       });
-      scene = r.response || scene;
-    } catch (e) {}
+      const t = String((r && r.response) || '').replace(/^["'\s]+|["'\s]+$/g, '');
+      if (t && !/[\u0E00-\u0E7F]/.test(t)) { scene = t; translated = true; } // ต้องไม่มีตัวอักษรไทยหลงเหลือ
+    } catch (e) {
+      console.error('translate error:', e && e.message);
+    }
+    if (!translated) scene = 'a cozy everyday moment, a diary page, a cup of tea and flowers'; // กันส่งภาษาไทยดิบๆ ให้ FLUX
 
     const prompt = 'cute hand-drawn line art illustration, soft pastel colors, thin simple outlines, kawaii, whimsical, white background, ' + scene;
 

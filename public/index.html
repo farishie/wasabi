@@ -50,6 +50,15 @@ main{position:relative;z-index:1}nav{z-index:1}
 :root[data-holiday="songkran"]{--bg:#f1faff;--card:#fff;--tx:#34506a;--mu:#6f8aa0;--ln:#d6ecf7;--ac:#3f9fd3;--mix:55%;color-scheme:light}
 :root[data-holiday="mother"]{--bg:#f1f6ff;--card:#fff;--tx:#34456a;--mu:#7080a5;--ln:#dbe5fb;--ac:#5b8def;--mix:55%;color-scheme:light}
 :root[data-holiday="father"]{--bg:#fffbea;--card:#fff;--tx:#4f4520;--mu:#8f844f;--ln:#f3ebc4;--ac:#e5b800;--on:#3a2a00;--mix:55%;color-scheme:light}
+.gwrap{position:relative;aspect-ratio:4/3;max-width:480px;margin:0 auto;border-radius:16px;overflow:hidden;background:var(--ln)}
+.gs{position:absolute;inset:0;margin:0;opacity:0;transition:opacity .8s ease}
+.gs.on{opacity:1}
+.gs img{width:100%;height:100%;object-fit:contain;display:block;background:#fff}
+.gs figcaption{position:absolute;left:0;right:0;bottom:0;padding:18px 12px 8px;font-size:13px;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.55));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gdots{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.gdots button{width:8px;height:8px;min-width:0;min-height:0;padding:0;border:0;border-radius:50%;background:var(--ln);cursor:pointer}
+.gdots button.on{background:var(--ac)}
+@media (prefers-reduced-motion:reduce){.gs{transition:none}}
 </style></head><body>
 <nav id="nav"></nav><main id="main"></main><div id="lock" hidden></div>
 <script>
@@ -143,6 +152,13 @@ function sorted(k){const a=[...L(k)];if(k==='calendar')return a.sort((x,y)=>(x.d
 function module(k){const m=M[k];const a=sorted(k).filter(it=>!q||JSON.stringify(it).toLowerCase().includes(q.toLowerCase()));
  let sum='';if(k==='finance'){const t=L(k);const inc=t.filter(x=>x.type==='รายรับ').reduce((s,x)=>s+ +x.amt,0),out=t.filter(x=>x.type!=='รายรับ').reduce((s,x)=>s+ +x.amt,0);sum=`<div class="grid"><div class="stat" style="--c:#cdeab8"><span>รายรับ</span><b>${inc.toLocaleString()}</b></div><div class="stat" style="--c:#ffc9d6"><span>รายจ่าย</span><b>${out.toLocaleString()}</b></div><div class="stat" style="--c:#bddcff"><span>คงเหลือ</span><b>${(inc-out).toLocaleString()}</b></div></div>`}
  return `<h2>${m.i} ${m.n}</h2><div class="sub">${L(k).length} รายการ</div>${sum}<div class="card"><div class="form">${m.f.map(inp).join('')}<button class="add" data-add="${k}">+ เพิ่ม</button></div>${k==='journal'?`<div style="margin-top:10px"><button class="bt" data-gen>✨ สร้างภาพจากข้อความ</button> <span id="gst" class="sub"></span><div id="gpv">${genPv()}</div></div>`:''}</div><div class="card"><input id="q" placeholder="🔍 ค้นหา" value="${e(q)}"><div>${a.map(it=>item(m,k,it)).join('')||'<div class="sub" style="margin:12px 0 0">ยังไม่มีรายการ</div>'}</div></div>`}
+let galT=null,galI=0;
+function gallery(){const a=sorted('journal').filter(x=>x.img).slice(0,12);
+ if(!a.length)return `<div class="card"><h3>🎨 ภาพจากไดอารี่</h3><div class="sub" style="margin:0">ยังไม่มีภาพจาก AI ไปที่ไดอารี่ แล้วกด ✨ สร้างภาพจากข้อความ</div></div>`;
+ return `<div class="card" id="gal"><h3>🎨 ภาพจากไดอารี่</h3><div class="gwrap">${a.map((x,i)=>`<figure class="gs${i?'':' on'}"><img data-img="${e(x.img)}" alt="ภาพจากไดอารี่"><figcaption>${e(x.date)} ${e(String(x.body||'').slice(0,40))}</figcaption></figure>`).join('')}</div><div class="gdots">${a.map((_,i)=>`<button data-gal="${i}" class="${i?'':'on'}" aria-label="ภาพที่ ${i+1}"></button>`).join('')}</div></div>`}
+function galShow(i){const s=document.querySelectorAll('#gal .gs'),d=document.querySelectorAll('#gal .gdots button');if(!s.length)return;galI=(i+s.length)%s.length;s.forEach((x,n)=>x.classList.toggle('on',n===galI));d.forEach((x,n)=>x.classList.toggle('on',n===galI))}
+function galStart(){clearInterval(galT);galT=null;if(document.querySelectorAll('#gal .gs').length>1)galT=setInterval(()=>{if(!document.getElementById('gal')){clearInterval(galT);galT=null;return}galShow(galI+1)},5000)}
+document.addEventListener('click',ev=>{const b=ev.target.closest('[data-gal]');if(b){galShow(+b.dataset.gal);galStart()}});
 function dash(){const t=today(),mo=t.slice(0,7);
  const open=L('todo').filter(x=>!x.done).sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1).slice(0,5);
  const ev=L('calendar').filter(x=>x.date>=t).sort((a,b)=>a.date>b.date?1:-1).slice(0,4);
@@ -150,6 +166,7 @@ function dash(){const t=today(),mo=t.slice(0,7);
  const done=L('todo').filter(x=>x.done).length,tot=L('todo').length;
  const dt=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  return `<h2>${T?T.g:'สวัสดี 🌸'}</h2><div class="sub">${dt}</div>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
+${gallery()}
 <div class="grid">${Object.entries(M).map(([k,m])=>`<button class="stat" style="--c:${m.c}" data-go="${k}"><span>${m.i} ${m.n}</span><b>${L(k).length}</b></button>`).join('')}</div>
 <div class="grid2"><div class="card"><h3>✅ งานที่ต้องทำ (เสร็จ ${done}/${tot})</h3>${open.map(x=>`<div class="it"><input type="checkbox" data-chk="${x.id}"><div class="b"><b>${e(x.title)}</b>${x.due?`<small>ภายใน ${e(x.due)}</small>`:''}</div></div>`).join('')||'<div class="sub">ไม่มีงานค้าง 🎉</div>'}</div>
 <div class="card"><h3>📅 กิจกรรมที่จะถึง</h3>${ev.map(x=>`<div class="it"><div class="b"><b>${e(x.title)}</b><small>${e(x.date)} ${e(x.time)}</small></div></div>`).join('')||'<div class="sub">ยังไม่มีนัดหมาย</div>'}</div>
@@ -160,7 +177,7 @@ function settings(){return `<h2>⚙️ ตั้งค่า</h2><div class="sub
 <div class="card"><h3>💾 สำรอง / นำเข้า</h3><textarea id="bk" rows="6">${e(JSON.stringify(D))}</textarea><div class="form" style="margin-top:8px"><button class="add" data-imp>นำเข้าข้อมูลจากข้อความด้านบน</button></div><div class="sub" style="margin:8px 0 0">คัดลอกข้อความไปเก็บไว้ในไฟล์/โน้ตของคุณเพื่อสำรอง</div></div>`}
 function render(){const v=(location.hash||'#dash').slice(1);
  $('#nav').innerHTML=`<h1>${T?T.i:'🌷'} My Workspace</h1>`+[['dash','🏠','แดชบอร์ด','#d9ccff'],...Object.entries(M).map(([k,m])=>[k,m.i,m.n,m.c]),['set','⚙️','ตั้งค่า','#ddd']].map(([k,i,n,c])=>`<a href="#${k}" style="--c:${c}" class="${k===v?'on':''}">${i} ${n}</a>`).join('');
- $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();loadImgs()}
+ $('#main').innerHTML=M[v]?module(v):v==='set'?settings():dash();loadImgs();galI=0;galStart()}
 async function add(k){const m=M[k],o={id:Date.now()};
  m.f.forEach(([key,,t])=>{let v=($('#f_'+key)?.value||'').trim();if(key==='url'&&v&&!/^https?:\/\//i.test(v))v='https://'+v;o[key]=v});
  if(!o[m.r||m.f[0][0]])return;if(k==='todo')o.done=false;if(k==='journal'&&GEN.blob){const p=uid+'/'+o.id+'.jpg';const{error}=await sb.storage.from('diary').upload(p,GEN.blob,{contentType:'image/jpeg',upsert:true});if(error)alert('บันทึกรูปไม่สำเร็จ: '+error.message);else o.img=p;GEN={}}L(k).push(o);save();render()}
