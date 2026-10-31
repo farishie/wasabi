@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Workspace">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600&family=Fredoka:wght@500;600&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#fdf8f5;--card:#fff;--tx:#4a4458;--mu:#8b8499;--ln:#eee6ee;--ac:#b7a4ee;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -88,6 +88,41 @@ button.add,button.bt{min-height:44px;width:100%}
 .gwrap{max-width:100%}
 #lock input{width:min(240px,80vw)}
 }
+
+/* ===== Pastel v2 ===== */
+body{font-family:'Prompt','Noto Sans Thai',system-ui,sans-serif}
+body::before,body::after{content:"";position:fixed;border-radius:50%;z-index:0;pointer-events:none}
+body::before{width:320px;height:320px;top:-110px;right:-70px;background:color-mix(in srgb,#ffc9d6 45%,var(--bg))}
+body::after{width:240px;height:240px;bottom:-80px;left:200px;background:color-mix(in srgb,#bfe8d0 40%,var(--bg))}
+:root[data-holiday] body::before,:root[data-holiday] body::after{opacity:.4}
+nav{background:var(--card);margin:16px 0 16px 16px;top:16px;height:calc(100vh - 32px);border-radius:28px;box-shadow:0 6px 24px color-mix(in srgb,var(--ac) 22%,transparent)}
+nav h1{font:600 17px 'Fredoka','Prompt',sans-serif;margin:2px 8px 14px}
+nav a{padding:7px 10px;border-radius:16px}
+nav a .ni{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:16px;line-height:1;background:color-mix(in srgb,var(--c,var(--ac)) var(--mix,80%),var(--card))}
+nav a.on{background:color-mix(in srgb,var(--ac) 22%,var(--card))}
+h2{font-family:'Fredoka','Prompt',sans-serif;font-weight:600}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:16px;border-radius:30px;padding:20px 28px;margin-bottom:18px;background:color-mix(in srgb,var(--ac) 38%,var(--card))}
+.hero h2{font-size:28px}
+.hero .sub{margin:4px 0 14px;color:var(--tx)}
+.pg{width:260px;max-width:100%;height:12px;border-radius:9px;background:var(--card)}
+.pg b{display:block;height:100%;border-radius:9px;background:#ff9bb7}
+.hero svg{width:120px;height:100px;flex-shrink:0}
+button.stat{display:flex;flex-direction:column;gap:8px;border-radius:24px;transition:transform .15s}
+button.stat:hover{transform:translateY(-2px)}
+.stat .ic{font-style:normal;width:32px;height:32px;border-radius:11px;background:var(--card);display:grid;place-items:center;font-size:17px}
+.stat b{font-family:'Fredoka','Prompt',sans-serif;font-weight:600}
+.card{border:0;border-radius:26px;padding:18px;box-shadow:0 6px 20px color-mix(in srgb,var(--ac) 14%,transparent)}
+.it{border-bottom:1px dashed var(--ln)}
+input,textarea,select{border:2px solid var(--ln);border-radius:16px}
+.it input[type=checkbox]{accent-color:#8f78e0}
+:root:not([data-holiday]) button.add,:root:not([data-holiday]) button.bt{background:#6f56d0;color:#fff}
+button.add,button.bt{border-radius:16px;font-weight:500}
+:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+@media(max-width:700px){
+nav{margin:0;top:auto;height:auto;border-radius:22px 22px 0 0;box-shadow:0 -4px 18px color-mix(in srgb,var(--ac) 18%,transparent)}
+nav a .ni{width:28px;height:28px;font-size:15px}
+.hero{padding:16px 18px}.hero svg{display:none}
+body::before,body::after{display:none}}
 </style></head><body>
 <nav id="nav"></nav><main id="main"></main><div id="lock" hidden></div>
 <script>
@@ -188,15 +223,17 @@ function gallery(){const a=sorted('journal').filter(x=>x.img).slice(0,12);
 function galShow(i){const s=document.querySelectorAll('#gal .gs'),d=document.querySelectorAll('#gal .gdots button');if(!s.length)return;galI=(i+s.length)%s.length;s.forEach((x,n)=>x.classList.toggle('on',n===galI));d.forEach((x,n)=>x.classList.toggle('on',n===galI))}
 function galStart(){clearInterval(galT);galT=null;if(document.querySelectorAll('#gal .gs').length>1)galT=setInterval(()=>{if(!document.getElementById('gal')){clearInterval(galT);galT=null;return}galShow(galI+1)},5000)}
 document.addEventListener('click',ev=>{const b=ev.target.closest('[data-gal]');if(b){galShow(+b.dataset.gal);galStart()}});
+const MC='<svg viewBox="0 0 120 100" style="stroke:none" role="img" aria-label="มาสคอตหน้ายิ้ม"><circle cx="60" cy="54" r="40" fill="#fff"/><circle cx="46" cy="50" r="5" fill="#4a4458"/><circle cx="74" cy="50" r="5" fill="#4a4458"/><circle cx="38" cy="62" r="7" fill="#ffc9d6"/><circle cx="82" cy="62" r="7" fill="#ffc9d6"/><path d="M52 62q8 8 16 0" stroke="#4a4458" stroke-width="3" fill="none"/><path d="M96 12l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#fff0a3"/></svg>';
 function dash(){const t=today(),mo=t.slice(0,7);
  const open=L('todo').filter(x=>!x.done).sort((a,b)=>(a.due||'9')>(b.due||'9')?1:-1).slice(0,5);
  const ev=L('calendar').filter(x=>x.date>=t).sort((a,b)=>a.date>b.date?1:-1).slice(0,4);
  const fm=L('finance').filter(x=>(x.date||'').startsWith(mo));const inc=fm.filter(x=>x.type==='รายรับ').reduce((s,x)=>s+ +x.amt,0),out=fm.filter(x=>x.type!=='รายรับ').reduce((s,x)=>s+ +x.amt,0);
  const done=L('todo').filter(x=>x.done).length,tot=L('todo').length;
  const dt=new Date().toLocaleDateString('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
- return `<h2>${T?T.g:'สวัสดี 🌸'}</h2><div class="sub">${dt}</div>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
+ const pct=tot?Math.round(done*100/tot):0;
+ return `<section class="hero"><div><h2>${T?T.g:'สวัสดี 🌸'}</h2><div class="sub">${dt} · เสร็จแล้ว ${done}/${tot} งาน</div><div class="pg" role="img" aria-label="ความคืบหน้า ${pct}%"><b style="width:${pct}%"></b></div></div>${MC}</section>${T?`<div class="card" style="border-color:var(--ac)">${T.m}</div>`:''}
 ${gallery()}
-<div class="grid">${Object.entries(M).map(([k,m])=>`<button class="stat" style="--c:${m.c}" data-go="${k}"><span>${m.i} ${m.n}</span><b>${L(k).length}</b></button>`).join('')}</div>
+<div class="grid">${Object.entries(M).map(([k,m])=>`<button class="stat" style="--c:${m.c}" data-go="${k}"><i class="ic">${m.i}</i><span>${m.n}</span><b>${L(k).length}</b></button>`).join('')}</div>
 <div class="grid2"><div class="card"><h3>✅ งานที่ต้องทำ (เสร็จ ${done}/${tot})</h3>${open.map(x=>`<div class="it"><input type="checkbox" data-chk="${x.id}"><div class="b"><b>${e(x.title)}</b>${x.due?`<small>ภายใน ${e(x.due)}</small>`:''}</div></div>`).join('')||'<div class="sub">ไม่มีงานค้าง 🎉</div>'}</div>
 <div class="card"><h3>📅 กิจกรรมที่จะถึง</h3>${ev.map(x=>`<div class="it"><div class="b"><b>${e(x.title)}</b><small>${e(x.date)} ${e(x.time)}</small></div></div>`).join('')||'<div class="sub">ยังไม่มีนัดหมาย</div>'}</div>
 <div class="card"><h3>💰 เดือนนี้</h3><div class="in">รายรับ +${inc.toLocaleString()} ฿</div><div class="out">รายจ่าย −${out.toLocaleString()} ฿</div><b>คงเหลือ ${(inc-out).toLocaleString()} ฿</b></div>
