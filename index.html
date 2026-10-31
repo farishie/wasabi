@@ -67,7 +67,7 @@ finance:{n:'การเงิน',i:'💰',c:'#cdeab8',f:[['title','ราย�
 const $=s=>document.querySelector(s);
 const e=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
-const SB_URL='https://YOUR-PROJECT.supabase.co',SB_KEY='YOUR-ANON-KEY';
+const SB_URL='https://nsyrgwfuoyrwyhdsfkia.supabase.co',SB_KEY='sb_publishable_LJjFWwcr9Ps2k15ItZwNOQ_j8sf9hIv';
 const sb=window.supabase.createClient(SB_URL,SB_KEY);
 let D={},uid=null,tm=null;
 const setSt=t=>{const x=$('#st');if(x)x.textContent=t};
